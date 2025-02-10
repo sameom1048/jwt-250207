@@ -50,6 +50,9 @@ public class MemberService {
     public Optional<Member> getMemberByAccessToken(String accessToken) {
 
         Map<String, Object> payload = authTokenService.getPayload(accessToken);
+
+        if(payload == null) return Optional.empty();
+
         long id = (long) payload.get("id");
 
         return memberRepository.findById(id);
