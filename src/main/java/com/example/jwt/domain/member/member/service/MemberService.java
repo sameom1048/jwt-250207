@@ -5,6 +5,7 @@ import com.example.jwt.domain.member.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -44,5 +45,13 @@ public class MemberService {
 
     public String getAuthToken(Member member) {
         return authTokenService.genAccessToken(member);
+    }
+
+    public Optional<Member> getMemberByAccessToken(String accessToken) {
+
+        Map<String, Object> payload = authTokenService.getPayload(accessToken);
+        long id = (long) payload.get("id");
+
+        return memberRepository.findById(id);
     }
 }
