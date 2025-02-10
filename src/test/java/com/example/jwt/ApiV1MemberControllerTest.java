@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -276,7 +276,8 @@ public class ApiV1MemberControllerTest {
     @DisplayName("내 정보 조회")
     void me1() throws Exception {
 
-        String token = "eyJhbGciOiJIUzUxMiJ9.eyJ1c2VybmFtZSI6InVzZXIxIiwiaWQiOjMsImlhdCI6MTczOTE1NTAyNCwiZXhwIjoxNzcwNjkxMDI0fQ.YQPfLDE0blD-sNrv6MpNey2XcTXy13d0kJc4IncPFq07NLdA8r7HVj1Us8c_LohOVgUHR9K8EMp1eaGSMDPwsw";
+        String apiKey = loginedMember.getApiKey();
+        String token = memberService.getAuthToken(loginedMember);
 
         ResultActions resultActions = meRequest(token);
 

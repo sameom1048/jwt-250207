@@ -26,16 +26,26 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
         String authorizationHeader = request.getHeader("Authorization");
 
-        if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-//        String apiKey = authorizationHeader.substring("Bearer ".length());
-//        Optional<Member> opMember = memberService.findByApiKey(apiKey);
+        if(!authorizationHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        String accessToken = authorizationHeader.substring("Bearer ".length());
-        Optional<Member> opMember = memberService.getMemberByAccessToken(accessToken);
+        String authToken = authorizationHeader.substring("Bearer ".length());
+
+        // apiKey 방식 인증
+//        Optional<Member> opMember = memberService.findByApiKey(authToken);
+
+        // select * from member where api_key = 'user1';
+
+        // accessToken 인증 방식
+        Optional<Member> opMember = memberService.getMemberByAccessToken(authToken);
+
 
         if(opMember.isEmpty()) {
             filterChain.doFilter(request, response);
@@ -43,10 +53,8 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         }
 
         Member actor = opMember.get();
+        rq.setLogin(actor);
 
-        rq.setLogin(actor.getUsername());
-
-        System.out.println("hihi");
         filterChain.doFilter(request, response);
     }
 }

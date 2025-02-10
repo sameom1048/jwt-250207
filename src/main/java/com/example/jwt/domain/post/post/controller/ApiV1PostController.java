@@ -70,7 +70,7 @@ public class ApiV1PostController {
         );
 
         if (!post.isPublished()) {
-            Member actor = rq.getAuthenticatedActor(); //
+            Member actor = rq.getActor();
             post.canRead(actor);
         }
 

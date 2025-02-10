@@ -6,6 +6,7 @@ import com.example.jwt.global.entity.BaseTime;
 import com.example.jwt.global.exception.ServiceException;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class Post extends BaseTime {
 
     @ManyToOne(fetch = FetchType.LAZY)
