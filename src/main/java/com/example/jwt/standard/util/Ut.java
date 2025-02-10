@@ -3,9 +3,9 @@ package com.example.jwt.standard.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 
@@ -24,7 +24,9 @@ public class Ut {
     }
 
     public static class Jwt {
-        public static String createToken(Key secretKey, int expireSeconds, Map<String, Object> claims) {
+        public static String createToken(String keyString, int expireSeconds, Map<String, Object> claims) {
+
+            SecretKey secretKey = Keys.hmacShaKeyFor(keyString.getBytes());
 
             Date issuedAt = new Date();
             Date expiration = new Date(issuedAt.getTime() + 1000L * expireSeconds);
@@ -39,7 +41,9 @@ public class Ut {
             return jwt;
         }
 
-        public static boolean isValidToken(SecretKey secretKey, String token) {
+        public static boolean isValidToken(String keyString, String token) {
+            SecretKey secretKey = Keys.hmacShaKeyFor(keyString.getBytes());
+
             try {
                 Jwts
                         .parser()
@@ -57,7 +61,9 @@ public class Ut {
 
 
 
-        public static Map<String, Object> getPayload(SecretKey secretKey, String jwtStr) {
+        public static Map<String, Object> getPayload(String keyString, String jwtStr) {
+            SecretKey secretKey = Keys.hmacShaKeyFor(keyString.getBytes());
+
             return (Map<String, Object>) Jwts
                     .parser()
                     .verifyWith(secretKey)
