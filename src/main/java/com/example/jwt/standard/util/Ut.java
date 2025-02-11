@@ -52,6 +52,7 @@ public class Ut {
                         .parse(token);
 
             } catch (Exception e) {
+                e.printStackTrace();
                 return false;
             }
 

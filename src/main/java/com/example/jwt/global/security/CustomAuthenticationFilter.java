@@ -53,6 +53,21 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
 
         if(opMember.isEmpty()) {
+
+            // 재발급
+            Optional<Member> opApiMember = memberService.findByApiKey(apiKey);
+
+            if(opApiMember.isEmpty()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String newAuthToken = memberService.getAuthToken(opApiMember.get());
+            response.addHeader("Authorization", "Bearer " + newAuthToken);
+
+            Member actor = opApiMember.get();
+            rq.setLogin(actor);
+
             filterChain.doFilter(request, response);
             return;
         }
