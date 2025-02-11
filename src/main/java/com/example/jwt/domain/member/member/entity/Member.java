@@ -53,7 +53,7 @@ public class Member extends BaseTime {
         List<String> authorites = new ArrayList<>();
 
         if(isAdmin()) {
-            authorites.add("ADMIN_ACT");
+            authorites.add("ROLE_ADMIN");
         }
 
         return authorites;

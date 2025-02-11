@@ -32,7 +32,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/*/members/login", "/api/*/members/join")
                                 .permitAll()
                                 .requestMatchers("/api/v1/posts/statistics")
-                                .hasAuthority("ADMIN_ACT")
+                                .hasRole("ADMIN")
                                 .anyRequest()
                                 .authenticated())
                 .headers((headers) -> headers
