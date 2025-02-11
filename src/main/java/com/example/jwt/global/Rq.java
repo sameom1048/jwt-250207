@@ -4,7 +4,9 @@ import com.example.jwt.domain.member.member.entity.Member;
 import com.example.jwt.domain.member.member.service.MemberService;
 import com.example.jwt.global.exception.ServiceException;
 import com.example.jwt.global.security.SecurityUser;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,6 +23,7 @@ public class Rq {
 
     private final HttpServletRequest request;
     private final MemberService memberService;
+    private final HttpServletResponse response;
 
     public void setLogin(Member actor) {
 
@@ -52,5 +55,36 @@ public class Rq {
                 .id(user.getId())
                 .username(user.getUsername())
                 .build();
+    }
+
+    public String getHeader(String name) {
+        return request.getHeader(name);
+    }
+
+    public String getValueFromCookie(String name) {
+        Cookie[] cookies = request.getCookies();
+        if(cookies == null) {
+            return null;
+        }
+        for(Cookie cookie : cookies) {
+            if(cookie.getName().equals(name)) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setHeader(String name, String value) {
+        response.setHeader(name, value);
+    }
+
+    public void addCookie(String name, String value) {
+        Cookie accsessTokenCookie = new Cookie(name, value);
+        accsessTokenCookie.setDomain("localhost");
+        accsessTokenCookie.setPath("/");
+        accsessTokenCookie.setHttpOnly(true);
+        accsessTokenCookie.setSecure(true);
+        accsessTokenCookie.setAttribute("SameSite", "Strict");
+        response.addCookie(accsessTokenCookie);
     }
 }

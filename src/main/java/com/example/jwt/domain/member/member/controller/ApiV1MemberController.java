@@ -66,7 +66,8 @@ public class ApiV1MemberController {
         accessTokenCookie.setAttribute("SameSite", "Strict");
 
 
-        response.addCookie(accessTokenCookie);
+        rq.addCookie("accessToken", accessToken);
+        rq.addCookie("apiKey", member.getApiKey());
 
         return new RsData<>(
                 "200-1",
