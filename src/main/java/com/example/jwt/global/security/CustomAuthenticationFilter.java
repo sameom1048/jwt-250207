@@ -31,7 +31,9 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         return authorizationHeader.startsWith("Bearer ");
     }
 
-    private String[] getAuthTokenFromRequest() {
+    record AuthToken(String apiKey, String accessToken) {}
+
+    private AuthToken getAuthTokenFromRequest() {
 
         if (isAuthorizationHeader()) {
 
@@ -44,7 +46,7 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
                 return null;
             }
 
-            return new String[]{tokenBits[0], tokenBits[1]};
+            return new AuthToken(tokenBits[0], tokenBits[1]);
         }
 
         String accessToken = rq.getValueFromCookie("accessToken");
@@ -54,11 +56,11 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
             return null;
         }
 
-        return new String[]{apiKey, accessToken};
+        return new AuthToken(apiKey, accessToken);
 
     }
 
-    private Member refreshAccessToken(String accessToken, String apiKey) {
+    private Member getMemberByAccessToken(String accessToken, String apiKey) {
 
         Optional<Member> opAccMember = memberService.getMemberByAccessToken(accessToken);
 
@@ -82,24 +84,24 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String[] tokens = getAuthTokenFromRequest();
+        AuthToken tokens = getAuthTokenFromRequest();
 
         if (tokens == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String apiKey = tokens[0];
-        String accessToken = tokens[1];
+        String apiKey = tokens.apiKey;
+        String accessToken = tokens.accessToken;
 
-        // 재발급 코드
-        Member actor = refreshAccessToken(accessToken, apiKey);
+        Member actor = getMemberByAccessToken(accessToken, apiKey);
+
         if (actor == null) {
             filterChain.doFilter(request, response);
             return;
         }
-        rq.setLogin(actor);
 
+        rq.setLogin(actor);
         filterChain.doFilter(request, response);
     }
 }
