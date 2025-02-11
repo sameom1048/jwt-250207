@@ -6,6 +6,8 @@ import com.example.jwt.domain.member.member.service.MemberService;
 import com.example.jwt.global.Rq;
 import com.example.jwt.global.dto.RsData;
 import com.example.jwt.global.exception.ServiceException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +46,7 @@ public class ApiV1MemberController {
     record LoginResBody(MemberDto item, String apiKey, String accessToken) {}
 
     @PostMapping("/login")
-    public RsData<LoginResBody> login(@RequestBody @Valid LoginReqBody reqBody) {
+    public RsData<LoginResBody> login(@RequestBody @Valid LoginReqBody reqBody, HttpServletResponse response) {
 
         Member member = memberService.findByUsername(reqBody.username()).orElseThrow(
                 () -> new ServiceException("401-1", "잘못된 아이디입니다.")
@@ -54,7 +56,17 @@ public class ApiV1MemberController {
             throw new ServiceException("401-2", "비밀번호가 일치하지 않습니다.");
         }
 
-        String authToken = memberService.getAuthToken(member);
+        String accessToken = memberService.getAuthToken(member);
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+
+        accessTokenCookie.setDomain("localhost");
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setAttribute("SameSite", "Strict");
+
+
+        response.addCookie(accessTokenCookie);
 
         return new RsData<>(
                 "200-1",
@@ -62,7 +74,7 @@ public class ApiV1MemberController {
                 new LoginResBody(
                         new MemberDto(member),
                         member.getApiKey(),
-                        authToken
+                        accessToken
                 )
         );
     }
