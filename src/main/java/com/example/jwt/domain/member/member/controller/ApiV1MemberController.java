@@ -2,7 +2,6 @@ package com.example.jwt.domain.member.member.controller;
 
 import com.example.jwt.domain.member.member.dto.MemberDto;
 import com.example.jwt.domain.member.member.entity.Member;
-import com.example.jwt.domain.member.member.service.AuthTokenService;
 import com.example.jwt.domain.member.member.service.MemberService;
 import com.example.jwt.global.Rq;
 import com.example.jwt.global.dto.RsData;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ApiV1MemberController {
 
-    private final AuthTokenService authTokenService;
     private final MemberService memberService;
     private final Rq rq;
 
@@ -37,7 +35,7 @@ public class ApiV1MemberController {
                 "201-1",
                 "회원 가입이 완료되었습니다.",
                 new MemberDto(member)
-                );
+        );
     }
 
 
@@ -81,6 +79,4 @@ public class ApiV1MemberController {
                 new MemberDto(member)
         );
     }
-
-
 }

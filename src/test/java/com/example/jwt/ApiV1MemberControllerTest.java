@@ -296,7 +296,7 @@ public class ApiV1MemberControllerTest {
     @DisplayName("내 정보 조회 - 실패 - 잘못된 api key")
     void me2() throws Exception {
 
-        String apiKey = "eyJhbGciOiJIUzUxMiJ9.eyJpZCI6MywidXNlcm5hbWUiOiJ1c2VyMSIsImlhdCI6MTczOTE2NzY5NiwiZXhwIjoxNzcwNzAzNjk2fQ.aUvcx3B910WRoM4E8YHUPfmrEKU4EUuovgiffyp0ps6xKdUHsHvZy4ToXPykb1d3TP-WeLpcANtckcH-4rHO6g";
+        String apiKey = "";
 
         ResultActions resultActions = meRequest(apiKey);
 

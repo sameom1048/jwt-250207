@@ -53,7 +53,6 @@ public class ApiV1CommentControllerTest {
     void write() throws Exception {
 
         long postId = 1;
-        String apiKey = "user1";
         String content = "댓글 내용";
 
         ResultActions resultActions = mvc
@@ -90,7 +89,6 @@ public class ApiV1CommentControllerTest {
 
         long postId = 1;
         long commentId = 1;
-        String apiKey = "user1";
         String content = "댓글 내용";
 
         ResultActions resultActions = mvc
@@ -124,7 +122,6 @@ public class ApiV1CommentControllerTest {
 
         long postId = 1;
         long commentId = 1;
-        String apiKey = "user1";
 
         ResultActions resultActions = mvc
                 .perform(

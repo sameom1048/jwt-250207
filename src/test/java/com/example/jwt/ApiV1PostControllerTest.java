@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -103,7 +104,7 @@ public class ApiV1PostControllerTest {
                 .andExpect(handler().methodName("getItems"))
                 .andExpect(jsonPath("$.code").value("200-1"))
                 .andExpect(jsonPath("$.msg").value("글 목록 조회가 완료되었습니다."))
-                .andExpect(jsonPath("$.data.items.length()").value( 3)) // 한페이지당 보여줄 글 개수
+                .andExpect(jsonPath("$.data.items.length()").value(3)) // 한페이지당 보여줄 글 개수
                 .andExpect(jsonPath("$.data.currentPageNo").isNumber()) // 현재 페이지
                 .andExpect(jsonPath("$.data.totalPages").isNumber()); // 전체 페이지 개수
 
@@ -291,7 +292,6 @@ public class ApiV1PostControllerTest {
         return mvc
                 .perform(
                         post("/api/v1/posts")
-                                .header("Authorization", "Bearer " + apiKey)
                                 .content("""
                                         {
                                             "title": "%s",
@@ -311,6 +311,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("글 작성")
+    @WithUserDetails("user3")
     void write1() throws Exception {
 
         String title = "새로운 글 제목";
@@ -534,6 +535,61 @@ public class ApiV1PostControllerTest {
                 .andExpect(handler().methodName("delete"))
                 .andExpect(jsonPath("$.code").value("403-1"))
                 .andExpect(jsonPath("$.msg").value("자신이 작성한 글만 삭제 가능합니다."));
+
+    }
+
+    @Test
+    @DisplayName("통계")
+    void statistics() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        get("/api/v1/posts/statistics")
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("getStatistics"))
+                .andExpect(jsonPath("$.code").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("통계 조회가 완료되었습니다."))
+                .andExpect(jsonPath("$.data.postCount").value(10))
+                .andExpect(jsonPath("$.data.postPublishedCount").value(10))
+                .andExpect(jsonPath("$.data.postListedCount").value(10));
+    }
+
+    @Test
+    @DisplayName("통계 - 관리자 기능 - 관리자 접근")
+    void statisticsAdmin() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        get("/api/v1/posts/statistics")
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("getStatistics"))
+                .andExpect(jsonPath("$.code").value("200-1"))
+                .andExpect(jsonPath("$.msg").value("통계 조회가 완료되었습니다."))
+                .andExpect(jsonPath("$.data.postCount").value(10))
+                .andExpect(jsonPath("$.data.postPublishedCount").value(10))
+                .andExpect(jsonPath("$.data.postListedCount").value(10));
+    }
+
+    @Test
+    @DisplayName("통계 - 관리자 기능 - user1 접근")
+    void statisticsUser() throws Exception {
+        ResultActions resultActions = mvc.perform(
+                        get("/api/v1/posts/statistics")
+                )
+                .andDo(print());
+
+        resultActions
+                .andExpect(status().isForbidden())
+                .andExpect(handler().handlerType(ApiV1PostController.class))
+                .andExpect(handler().methodName("getStatistics"))
+                .andExpect(jsonPath("$.code").value("403-1"))
+                .andExpect(jsonPath("$.msg").value("접근 권한이 없습니다."));
 
     }
 }

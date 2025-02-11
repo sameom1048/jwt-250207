@@ -51,7 +51,9 @@ public class MemberService {
 
         Map<String, Object> payload = authTokenService.getPayload(accessToken);
 
-        if(payload == null) return Optional.empty();
+        if (payload == null) {
+            return Optional.empty();
+        }
 
         long id = (long) payload.get("id");
         String username = (String) payload.get("username");
