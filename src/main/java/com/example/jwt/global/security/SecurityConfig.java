@@ -31,8 +31,8 @@ public class SecurityConfig {
                                 .permitAll()
                                 .requestMatchers("/api/*/members/login", "/api/*/members/join")
                                 .permitAll()
-                                .requestMatchers("/api/v1/posts/statistics")
-                                .permitAll()
+//                                .requestMatchers("/api/v1/posts/statistics")
+//                                .permitAll()
                                 .anyRequest()
                                 .authenticated())
                 .headers((headers) -> headers

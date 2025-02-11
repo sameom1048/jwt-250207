@@ -29,7 +29,11 @@ public class ApiV1PostController {
     @GetMapping("/statistics")
     public RsData<StatisticsResBody> getStatistics() {
 
+        Member actor = rq.getActor();
 
+        if(!actor.isAdmin()) {
+            return new RsData<>("403-1","접근 권한이 없습니다.");
+        }
 
         return new RsData<>(
                 "200-1",

@@ -559,7 +559,9 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("통계 - 관리자 기능 - 관리자 접근")
+    @WithUserDetails("admin")
     void statisticsAdmin() throws Exception {
+
         ResultActions resultActions = mvc.perform(
                         get("/api/v1/posts/statistics")
                 )
@@ -578,6 +580,7 @@ public class ApiV1PostControllerTest {
 
     @Test
     @DisplayName("통계 - 관리자 기능 - user1 접근")
+    @WithUserDetails("user1")
     void statisticsUser() throws Exception {
         ResultActions resultActions = mvc.perform(
                         get("/api/v1/posts/statistics")
