@@ -31,7 +31,8 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
         return authorizationHeader.startsWith("Bearer ");
     }
 
-    record AuthToken(String apiKey, String accessToken) {}
+    record AuthToken(String apiKey, String accessToken) {
+    }
 
     private AuthToken getAuthTokenFromRequest() {
 
@@ -64,21 +65,21 @@ public class CustomAuthenticationFilter extends OncePerRequestFilter {
 
         Optional<Member> opAccMember = memberService.getMemberByAccessToken(accessToken);
 
-        if (opAccMember.isEmpty()) {
-            Optional<Member> opRefMember = memberService.findByApiKey(apiKey);
-
-            if (opRefMember.isEmpty()) {
-                return null;
-            }
-
-            String newAccessToken = memberService.genAccessToken(opRefMember.get());
-            rq.setHeader("Authorization", "Bearer " + newAccessToken);
-            rq.addCookie("accessToken", newAccessToken);
-
-            return opRefMember.get();
+        if (opAccMember.isPresent()) {
+            return opAccMember.get();
         }
 
-        return opAccMember.get();
+        Optional<Member> opRefMember = memberService.findByApiKey(apiKey);
+
+        if(opRefMember.isEmpty()) {
+            return null;
+        }
+
+        String newAccessToken = memberService.genAccessToken(opRefMember.get());
+        rq.addCookie("accessToken", newAccessToken);
+        rq.addCookie("apiKey", apiKey);
+
+        return opRefMember.get();
     }
 
     @Override

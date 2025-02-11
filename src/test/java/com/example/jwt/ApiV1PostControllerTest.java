@@ -292,6 +292,7 @@ public class ApiV1PostControllerTest {
         return mvc
                 .perform(
                         post("/api/v1/posts")
+                                .header("Authorization", "Bearer " + apiKey)
                                 .content("""
                                         {
                                             "title": "%s",
